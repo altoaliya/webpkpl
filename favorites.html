@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Favorites - EasyCare</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <link href="css/style.css" rel="stylesheet">
+    <style>
+        /* Styling untuk grid produk */
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            /* Tiga kolom */
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .product-item {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 8px;
+            text-align: center;
+            background-color: #f9f9f9;
+        }
+
+        .product-item img {
+            width: 100%;
+            height: auto;
+            max-width: 150px;
+        }
+
+        .product-item h3 {
+            font-size: 1.1rem;
+            margin: 10px 0;
+        }
+
+        .product-item p {
+            color: #333;
+        }
+
+        /* Styling input pencarian */
+        #search-box {
+            padding: 10px;
+            font-size: 16px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+        }
+
+        #result {
+            margin-top: 20px;
+        }
+
+        /* Memperkecil ukuran gambar */
+        .favo {
+            width: 30px;
+            /* Mengatur lebar gambar */
+            height: 30px;
+            /* Mengatur tinggi gambar */
+            object-fit: contain;
+            /* Agar gambar tidak terdistorsi */
+        }
+
+        .favorites-container {
+            margin-top: 20px;
+        }
+
+        .favorite-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+
+        .favorite-item button {
+            margin-left: 10px;
+        }
+    </style>
+</head>
+
+<body>
+
+    <!-- Start Header/Navigation -->
+    <nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+        <div class="container">
+            <a class="navbar-brand" href="index.php">EasyCare<span></span></a>
+
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+                aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+
+            <div class="collapse navbar-collapse" id="navbarsFurni">
+                <ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+                    <li class="nav-item ">
+                        <a class="nav-link" href="index.php">Home</a>
+                    </li>
+                    <li class="active"><a class="nav-link" href="shop.html">Shop</a></li>
+                    <li><a class="nav-link" href="services.html">Services</a></li>
+
+                </ul>
+
+
+                &nbsp;&nbsp;
+
+                <form id="searchForm">
+                    <input type="text" id="searchInput" placeholder="Search products..." />
+                </form>
+
+                <div id="result"></div> <!-- Hasil pencarian ditampilkan di sini -->
+
+                <ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+
+                    <li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li>
+                    <li><a class="nav-link" href="profil.php"><img src="images/user.svg"></a></li>
+                    <li><a class="nav-link" href="favorites.html"><img src="images/favo.svg" class="favo"></a></li>
+
+                </ul>
+            </div>
+    </nav>
+
+
+    <!-- Start Favorites Section -->
+    <div class="container favorites-container">
+        <h4>Your Favorite Products</h4>
+        <div id="favorites-list">
+            <!-- Daftar produk favorit akan dimasukkan di sini -->
+            <div class="favorite-item">
+                <span>Serum</span>
+                <button class="btn btn-danger btn-sm" onclick="removeFavorite(0)">Remove</button>
+            </div>
+
+            <div class="favorite-item">
+                <span>Day Cream</span>
+                <button class="btn btn-danger btn-sm" onclick="removeFavorite(1)">Remove</button>
+            </div>
+        </div>
+        <a href="shop.html" class="btn btn-primary mt-4">Back to Shop</a>
+    </div>
+    <!-- End Favorites Section -->
+
+    <script>
+        // Menghapus produk dari daftar favorit
+        function removeFavorite(index) {
+            let favoritesList = document.getElementById('favorites-list');
+            let product = favoritesList.getElementsByClassName('favorite-item')[index];
+            favoritesList.removeChild(product); // Menghapus produk berdasarkan indeks
+        }
+    </script>
+</body>
+
+</html>

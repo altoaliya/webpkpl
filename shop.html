@@ -1,0 +1,550 @@
+<!-- /*
+* Bootstrap 5
+* Template Name: Furni
+* Template Author: Untree.co
+* Template URI: https://untree.co/
+* License: https://creativecommons.org/licenses/by/3.0/
+*/ -->
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="author" content="Untree.co">
+	<link rel="shortcut icon" href="favicon.png">
+
+	<meta name="description" content="" />
+	<meta name="keywords" content="bootstrap, bootstrap4" />
+
+	<!-- Bootstrap CSS -->
+	<link href="css/bootstrap.min.css" rel="stylesheet">
+	<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+	<link href="css/tiny-slider.css" rel="stylesheet">
+	<link href="css/style.css" rel="stylesheet">
+	<title>EasyCare </title>
+
+	<style>
+		/* Styling untuk grid produk */
+		.product-grid {
+			display: grid;
+			grid-template-columns: repeat(3, 1fr);
+			/* Tiga kolom */
+			gap: 20px;
+			margin-top: 20px;
+		}
+
+		.product-item {
+			border: 1px solid #ddd;
+			padding: 10px;
+			border-radius: 8px;
+			text-align: center;
+			background-color: #f9f9f9;
+		}
+
+		.product-item img {
+			width: 100%;
+			height: auto;
+			max-width: 150px;
+		}
+
+		.product-item h3 {
+			font-size: 1.1rem;
+			margin: 10px 0;
+		}
+
+		.product-item p {
+			color: #333;
+		}
+
+		/* Styling input pencarian */
+		#search-box {
+			padding: 10px;
+			font-size: 16px;
+			width: 300px;
+			border-radius: 5px;
+			border: 1px solid #ccc;
+		}
+
+		#result {
+			margin-top: 20px;
+		}
+
+		/* Memperkecil ukuran gambar */
+		.favo {
+			width: 30px;
+			/* Mengatur lebar gambar */
+			height: 30px;
+			/* Mengatur tinggi gambar */
+			object-fit: contain;
+			/* Agar gambar tidak terdistorsi */
+		}
+	</style>
+</head>
+
+<body>
+
+	<!-- Start Header/Navigation -->
+	<nav class="custom-navbar navbar navbar navbar-expand-md navbar-dark bg-dark" arial-label="Furni navigation bar">
+
+		<div class="container">
+			<a class="navbar-brand" href="">EasyCare<span></span></a>
+
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarsFurni"
+				aria-controls="navbarsFurni" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarsFurni">
+				<ul class="custom-navbar-nav navbar-nav ms-auto mb-2 mb-md-0">
+					<li class="nav-item ">
+						<a class="nav-link" href="index.php">Home</a>
+					</li>
+					<li class="active"><a class="nav-link" href="shop.html">Shop</a></li>
+					<li><a class="nav-link" href="services.html">Services</a></li>
+
+				</ul>
+
+
+				&nbsp;&nbsp;
+
+				<form id="searchForm">
+					<input type="text" id="searchInput" placeholder="Search products..." />
+				</form>
+
+				<div id="result"></div> <!-- Hasil pencarian ditampilkan di sini -->
+
+				<ul class="custom-navbar-cta navbar-nav mb-2 mb-md-0 ms-5">
+
+					<li><a class="nav-link" href="cart.html"><img src="images/cart.svg"></a></li>
+					<li><a class="nav-link" href="profil.php"><img src="images/user.svg"></a></li>
+					<li><a class="nav-link" href="favorites.html"><img src="images/favo.svg" class="favo"></a></li>
+
+				</ul>
+			</div>
+	</nav>
+
+	<script>
+		document.getElementById('searchForm').addEventListener('submit', function (e) {
+			e.preventDefault(); // Mencegah form dari pengiriman default
+			const query = document.getElementById('searchInput').value.trim(); // Mengambil nilai input pencarian dan menghapus spasi
+
+			if (query === '') {
+				alert('Silakan masukkan kata kunci pencarian.'); // Menampilkan alert jika input kosong
+				return; // Menghentikan eksekusi lebih lanjut
+			}
+
+			fetch('search.php?q=' + query) // Mengirim permintaan ke search.php dengan parameter pencarian
+				.then(response => response.json()) // Mengonversi respons ke format JSON
+				.then(data => {
+					let resultHTML = ''; // Membuat elemen HTML untuk hasil
+					if (data.length === 0) {
+						resultHTML = '<p>Tidak ada produk yang ditemukan.</p>'; // Jika tidak ada hasil
+					} else {
+						data.forEach(item => { // Mengiterasi setiap item hasil pencarian
+							resultHTML += `
+                                <div class="product-item">
+                                    <img src="${item.image}" alt="${item.name}">
+                                    <h3>${item.name}</h3>
+                                    <p>${item.price}</p>
+                                </div>
+                            `; // Menampilkan item ke hasil
+						});
+					}
+					document.getElementById('result').innerHTML = resultHTML; // Menampilkan hasil di elemen dengan id 'result'
+				})
+				.catch(error => console.error('Error:', error)); // Menangani kesalahan
+		});
+	</script>
+
+
+	<div id="productList">
+		<!-- Produk akan dimuat di sini menggunakan AJAX -->
+	</div>
+
+	<script>
+		function handleSearch(event) {
+			event.preventDefault();
+			const searchQuery = document.getElementById('searchInput').value;
+
+			const xhr = new XMLHttpRequest();
+			xhr.open('GET', 'search.php?query=' + encodeURIComponent(searchQuery), true);
+			xhr.onreadystatechange = function () {
+				if (xhr.readyState == 4 && xhr.status == 200) {
+					document.getElementById('productList').innerHTML = xhr.responseText;
+				}
+			};
+			xhr.send();
+		}
+
+		// Fungsi ini akan dipanggil saat pengguna mengetik di kolom pencarian
+		document.getElementById('searchInput').addEventListener('keyup', handleSearch);
+	</script>
+
+
+	<div class="untree_co-section product-section before-footer-section">
+		<div class="container">
+			<div class="row">
+
+				<!-- Start Column 1 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/mw.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Micellar Water</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon"
+							data-product="Micellar Water" style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Cart Icon" class="cart-icon" data-product="Micellar Water"
+							style="width: 30px; height: 30px;">
+					</a>
+				</div>
+				<!-- End Column 1 -->
+
+
+
+				<!-- Start Column 2 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/mo.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Moisturizer</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon"
+							data-product="ProMoisturizer" style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Moisturizer"
+							style="width: 30px; height: 30px;">
+
+					</a>
+				</div>
+				<!-- End Column 2 -->
+
+				<!-- Start Column 3 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/se.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Scrub Exfoliate</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon"
+							data-product="Scrub Exfoliate" style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Scrub Exfoliate"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 3 -->
+
+				<!-- Start Column 4 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/oc.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Oil Cleanser</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon" data-product="Oil Cleanser"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Oil Cleanser"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 4 -->
+
+
+				<!-- Start Column 1 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/to.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Toner</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon" data-product="Toner"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Toner"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 1 -->
+
+				<!-- Start Column 2 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/s.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Serum</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon" data-product="Serum"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Serum"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 2 -->
+
+				<!-- Start Column 3 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/p2.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Paket Acne Fight EasyCare</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon"
+							data-product="Acne Fight EasyCare"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon"
+							data-product="Acne Fight EasyCare" style="width: 30px; height: 30px;">
+
+					</a>
+				</div>
+				<!-- End Column 3 -->
+
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/p1.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Paket Brightening EasyCare</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon"
+							data-product="Paket Brightening EasyCare"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon"
+							data-product="Paket Brightening EasyCare" style="width: 30px; height: 30px;">
+
+					</a>
+				</div>
+				<!-- End Column 4 -->
+
+				<!-- Start Column 5 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/ec.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Eye Cream</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" class="favorite-icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" class="cart-icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 5 -->
+
+				<!-- Start Column 6 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/sm.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Sheet Mask</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">
+
+					</a>
+				</div>
+				<!-- End Column 6 -->
+
+				<!-- Start Column 7 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/bs.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Body Scrub</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">
+
+					</a>
+				</div>
+				<!-- End Column 7 -->
+
+				<!-- Start Column 8 -->
+				<div class="col-12 col-md-4 col-lg-3 mb-5">
+					<a class="product-item" href="#">
+						<img src="images/p/af.png" class="img-fluid product-thumbnail">
+						<h3 class="product-title">Acne Foam</h3>
+						<img src="images/favo.svg" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">&nbsp;&nbsp;&nbsp;&nbsp;
+						<strong class="product-price">$50.00</strong>&nbsp;&nbsp;&nbsp;&nbsp;
+						<img src="images/cart1.png" alt="Favorite Icon" data-product="Product 1"
+							style="width: 30px; height: 30px;">
+
+
+					</a>
+				</div>
+				<!-- End Column 8 -->
+				<script>
+					function addToCart(productName, price, image) {
+						let cart = JSON.parse(localStorage.getItem('cart')) || [];
+						const existingProduct = cart.find(product => product.name === productName);
+
+						if (existingProduct) {
+							existingProduct.quantity += 1; // Menambah kuantitas jika produk sudah ada
+						} else {
+							cart.push({ name: productName, price: parseFloat(price), image: image, quantity: 1 }); // Menambahkan produk baru
+						}
+
+						localStorage.setItem('cart', JSON.stringify(cart));
+						alert(productName + " has been added to the cart!");
+					}
+
+					// Fungsi untuk menambahkan produk ke favorit
+					function addToFavorites(productName) {
+						let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+						if (!favorites.includes(productName)) {
+							favorites.push(productName);
+							localStorage.setItem('favorites', JSON.stringify(favorites));
+							alert(productName + " has been added to your favorites!");
+						} else {
+							alert(productName + " is already in your favorites.");
+						}
+					}
+
+					// Menangani klik ikon favorit dan keranjang
+					document.querySelectorAll('.favorite-icon').forEach(item => {
+						item.addEventListener('click', function () {
+							const productName = this.getAttribute('data-product');
+							addToFavorites(productName);
+						});
+					});
+
+					document.querySelectorAll('.cart-icon').forEach(item => {
+						item.addEventListener('click', function () {
+							const productName = this.getAttribute('data-product');
+							const price = this.getAttribute('data-price');
+							const image = this.getAttribute('data-image');
+							addToCart(productName, price, image);
+						});
+					});
+
+				</script>
+
+			</div>
+		</div>
+	</div>
+
+
+	<!-- Start Footer Section -->
+	<footer class="footer-section">
+		<div class="container relative">
+
+			<div class="sofa-img">
+				<img src="images/homee.png" alt="Image" class="img-fluid">
+			</div>
+
+			<div class="row">
+				<div class="col-lg-8">
+					<div class="subscription-form">
+						<h3 class="d-flex align-items-center"><span class="me-1"><img src="images/envelope-outline.svg"
+									alt="Image" class="img-fluid"></span><span>Subscribe to Newsletter</span></h3>
+
+						<form action="#" class="row g-3">
+							<div class="col-auto">
+								<input type="text" class="form-control" placeholder="Enter your name">
+							</div>
+							<div class="col-auto">
+								<input type="email" class="form-control" placeholder="Enter your email">
+							</div>
+							<div class="col-auto">
+								<button class="btn btn-primary">
+									<span class="fa fa-paper-plane"></span>
+								</button>
+							</div>
+						</form>
+
+					</div>
+				</div>
+			</div>
+
+			<div class="row g-5 mb-5">
+				<div class="col-lg-4">
+					<div class="mb-4 footer-logo-wrap"><a href="#" class="footer-logo">EasyCare<span></span></a></div>
+					<p class="mb-4">Donec facilisis quam ut purus rutrum lobortis. Donec vitae odio quis nisl dapibus
+						malesuada. Nullam ac aliquet velit. Aliquam vulputate velit imperdiet dolor tempor tristique.
+						Pellentesque habitant</p>
+
+					<ul class="list-unstyled custom-social">
+						<li><a href="#"><span class="fa fa-brands fa-facebook-f"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-twitter"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-instagram"></span></a></li>
+						<li><a href="#"><span class="fa fa-brands fa-linkedin"></span></a></li>
+					</ul>
+				</div>
+
+				<div class="col-lg-8">
+					<div class="row links-wrap">
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">About us</a></li>
+								<li><a href="#">Services</a></li>
+								<li><a href="#">Blog</a></li>
+								<li><a href="#">Contact us</a></li>
+							</ul>
+
+						</div>
+
+
+
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Support</a></li>
+								<li><a href="#">Knowledge base</a></li>
+								<li><a href="#">Live chat</a></li>
+							</ul>
+						</div>
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Jobs</a></li>
+								<li><a href="#">Our team</a></li>
+								<li><a href="#">Leadership</a></li>
+								<li><a href="#">Privacy Policy</a></li>
+							</ul>
+						</div>
+
+						<div class="col-6 col-sm-6 col-md-3">
+							<ul class="list-unstyled">
+								<li><a href="#">Nordic Chair</a></li>
+								<li><a href="#">Kruzo Aero</a></li>
+								<li><a href="#">Ergonomic Chair</a></li>
+							</ul>
+						</div>
+					</div>
+				</div>
+
+			</div>
+
+			<div class="border-top copyright">
+				<div class="row pt-4">
+					<div class="col-lg-6">
+						<p class="mb-2 text-center text-lg-start">Copyright &copy;
+							<script>document.write(new Date().getFullYear());</script>. All Rights Reserved. &mdash;
+							Designed with love by <a href="https://untree.co">Untree.co</a> Distributed By <a
+								href="https://themewagon.com">ThemeWagon</a>
+							<!-- License information: https://untree.co/license/ -->
+						</p>
+					</div>
+
+					<div class="col-lg-6 text-center text-lg-end">
+						<ul class="list-unstyled d-inline-flex ms-auto">
+							<li class="me-4"><a href="#">Terms &amp; Conditions</a></li>
+							<li><a href="#">Privacy Policy</a></li>
+						</ul>
+					</div>
+
+				</div>
+			</div>
+
+		</div>
+	</footer>
+	<!-- End Footer Section -->
+
+
+	<script src="js/bootstrap.bundle.min.js"></script>
+	<script src="js/tiny-slider.js"></script>
+	<script src="js/custom.js"></script>
+</body>
+
+</html>
